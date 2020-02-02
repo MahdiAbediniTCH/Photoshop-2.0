@@ -8,6 +8,16 @@ COLOR_EFFECT_VALUES = {'red': (COLOR_MEDIUM, 0, 0), 'green': (0, COLOR_MEDIUM, 0
     'blue': (0, 0, COLOR_MEDIUM), 'yellow': (COLOR_MEDIUM // 2, COLOR_MEDIUM // 2, 0),\
         'violet': (COLOR_MEDIUM // 2, 0, COLOR_MEDIUM // 2)}
 
+def process(param, img):
+    if param[0] == "grayscale":
+        grayscale(img)
+    elif param[0] == "blackandwhite":
+        blackandwhite(img)
+    elif param[0] == "color":
+        color(img, param[1])
+    else:
+        return False, "attr"
+    return True
 
 def calculate_brightness(rgb):
     return rgb[0] / 255 * 0.2126 + rgb[1] / 255 * 0.7152 + rgb[2] / 255 * 0.0722
