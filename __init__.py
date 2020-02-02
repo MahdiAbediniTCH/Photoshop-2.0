@@ -1,4 +1,5 @@
 import effects
+from PIL import Image
 #import modifications
 
 ERRORS = {'q': "Error: Invalid use of quotation mark"}
@@ -23,6 +24,21 @@ def get_parameters(string):
             quote[-1] = quote[-1][:-1]
             res.append(' '.join(quote))
     return res
-print(get_parameters(input()))
 
+pictures = {}
+
+while True:
+    param = get_parameters(input())
+    command = param[0]
+    if command == "open":
+        pictures[param[2]] = Image.open(param[1])
+    elif command == "effect":
+        effects.process(param[1:], pictures[param[1]])
+    elif command == "modify":
+        modifications.process(param[1:], pictures[param[1]])
+    elif command == "save":
+        pictures[param[1]].save(param[2])
+    elif command == "close":
+        del pictures[param[1]]
+    
         
