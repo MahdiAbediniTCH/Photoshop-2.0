@@ -1,7 +1,7 @@
 from PIL import Image
 from sys import stderr
 import effects
-#import modifications
+import modifications
 
 ERRORS = {'?': "An error occured", 'q': "Invalid use of quotation mark", 'attr': "Invalid attribute", \
     'command': "Invalid command", 'name': "Name not found", \
@@ -98,5 +98,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-        
-        
