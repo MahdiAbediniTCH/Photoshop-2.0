@@ -9,12 +9,15 @@ COLOR_EFFECT_VALUES = {'red': (COLOR_MEDIUM, 0, 0), 'green': (0, COLOR_MEDIUM, 0
         'violet': (COLOR_MEDIUM // 2, 0, COLOR_MEDIUM // 2)}
 
 def process(param, img):
-    if param[0] == "grayscale":
+    effect = param[0]
+    if effect == "grayscale":
         grayscale(img)
-    elif param[0] == "blackandwhite":
+    elif effect == "blackandwhite":
         blackandwhite(img)
-    elif param[0] == "color":
+    elif effect == "color":
         color(img, param[1])
+    elif effect == "negative":
+        negative(img)
     else:
         return False, "attr"
     return True
@@ -40,6 +43,16 @@ def blackandwhite(img):
             else:
                 img.putpixel((x, y), WHITE)
     return True
+
+def negative(img):
+    pixels = img.load()
+    for x in range(img.size[0]):
+        for y in range(img.size[1]):
+            r, g, b = pixels[x,y]
+            r = 255 - r
+            g = 255 - g
+            b = 255 - b
+            img.putpixel((x, y), (r, g, b))
 
 def color(img, col):
     pixels = img.load()
