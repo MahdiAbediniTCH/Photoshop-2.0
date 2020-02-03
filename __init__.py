@@ -70,13 +70,16 @@ def main():
             except KeyError:
                 error('name')
                 continue
-            except:
+            except Exception as e:
                 error('?')
+                raise e
                 continue
             if type(res) == tuple:
                 if not res[0]:
                     error(res[1])
                     continue
+                if res[0] == 'image':
+                    pictures[param[1]] = res[1]
         elif command == "save":
             try:
                 pictures[param[1]].save(param[2])
