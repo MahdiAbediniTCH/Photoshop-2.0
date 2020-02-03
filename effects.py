@@ -54,3 +54,6 @@ def color(img, col):
                pixel_color[2] + chosen_color[2],)
            img.putpixel((x, y), new_color)
     return True
+
+def colorfilter(img, col):
+    pass

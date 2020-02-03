@@ -12,14 +12,14 @@ def process(param, img):
         img_pixels.append(l)
     if param[0] == "brightness":
         return 'image', pic_brightness(weight, height, img, img_pixels, int(param[1]))
-    if param[0] == "pic_flip":
+    if param[0] == "flip":
         pic_flip(weight, height, img, img_pixels, param[1])
     elif param[0] == "rotate":
         return 'image', rotate(img, int(param[1]))
-    elif param[0] == "blur":
+    elif param[0] == "res_decrease":
         for i in range(len(param)):
             param[i] = paranthesesOrComma(param[i])
-        blur(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels)
+        resdec(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels)
     else:
         return False,"attr"
     return True
@@ -54,7 +54,7 @@ def rotate(img, degree):
     img = img.rotate(degree)
     return img
 
-def blur(img, radius, img_pixels):
+def resdec(img, radius, img_pixels):
     for i in range(radius[0][0],radius[1][0],3):
         for j in range(radius[0][1], radius[1][1],3):
               rr = img_pixels[i][j][0]
