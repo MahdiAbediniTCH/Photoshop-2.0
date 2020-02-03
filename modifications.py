@@ -17,7 +17,9 @@ def process(param, img):
     elif param[0] == "rotate":
         return 'image', rotate(img, int(param[1]))
     elif param[0] == "blur":
-        blur(img, [[param[len(param)-4],param[len(param)-3]], [param[len(param)-2],param[len(param)-1]], img_pixels])
+        for i in range(len(param)):
+            param[i] = paranthesesOrComma(param[i])
+        blur(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels)
     else:
         return False,"attr"
     return True
@@ -58,11 +60,11 @@ def blur(img, radius, img_pixels):
               rr = img_pixels[i][j][0]
               gg = img_pixels[i][j][1]
               bb = img_pixels[i][j][2]
-              if i<weight-3 and j<height-3 and i>2 and j>2:
-                  rr = int((img_pixels[i+1][j][0]+img_pixels[i+1][j][0]+img_pixels[i-1][j][0]+img_pixels[i][j+1][0]+img_pixels[i][j-1][0]+img_pixels[i+1][j+1][0]+img_pixels[i-1][j-1][0])/9)
-                  gg = int((img_pixels[i+1][j][1]+img_pixels[i+1][j][1]+img_pixels[i-1][j][1]+img_pixels[i][j+1][1]+img_pixels[i][j-1][1]+img_pixels[i+1][j+1][1]+img_pixels[i-1][j-1][1])/9)
-                  bb = int((img_pixels[i+1][j][2]+img_pixels[i+1][j][2]+img_pixels[i-1][j][2]+img_pixels[i][j+1][2]+img_pixels[i][j-1][2]+img_pixels[i+1][j+1][2]+img_pixels[i-1][j-1][2])/9)
-                  for k in range(-1,2):
-                      for l in range(-1,2):
-                          img.putpixel((i+k,j+l), (rr, gg, bb))
+              
+              rr = int((img_pixels[i+1][j][0]+img_pixels[i+1][j][0]+img_pixels[i-1][j][0]+img_pixels[i][j+1][0]+img_pixels[i][j-1][0]+img_pixels[i+1][j+1][0]+img_pixels[i-1][j-1][0])/9)
+              gg = int((img_pixels[i+1][j][1]+img_pixels[i+1][j][1]+img_pixels[i-1][j][1]+img_pixels[i][j+1][1]+img_pixels[i][j-1][1]+img_pixels[i+1][j+1][1]+img_pixels[i-1][j-1][1])/9)
+              bb = int((img_pixels[i+1][j][2]+img_pixels[i+1][j][2]+img_pixels[i-1][j][2]+img_pixels[i][j+1][2]+img_pixels[i][j-1][2]+img_pixels[i+1][j+1][2]+img_pixels[i-1][j-1][2])/9)
+              for k in range(-1,2):
+                  for l in range(-1,2):
+                      img.putpixel((i+k,j+l), (rr, gg, bb))
     return True
