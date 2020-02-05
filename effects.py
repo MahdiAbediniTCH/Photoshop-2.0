@@ -3,23 +3,34 @@ from PIL import Image
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLACKWHITEVALUE = 0.7
-COLOR_MEDIUM = 125
-COLOR_EFFECT_VALUES = {'red': (COLOR_MEDIUM, 0, 0), 'green': (0, COLOR_MEDIUM, 0),\
-    'blue': (0, 0, COLOR_MEDIUM), 'yellow': (COLOR_MEDIUM // 2, COLOR_MEDIUM // 2, 0),\
-        'violet': (COLOR_MEDIUM // 2, 0, COLOR_MEDIUM // 2)}
+COLOR_EFFECT_MEDIUM = 30
+COLOR_MEDIUM = 255
+COLOR_EFFECT_VALUES = {'red': (1, 0, 0), 'green': (0, 1, 0),\
+    'blue': (0, 0, 1), 'yellow': (1 / 2, 1 / 2, 0),\
+        'violet': (1 / 2, 0, 1 / 2)}
 
 def process(param, img):
     effect = param[0]
     if effect == "grayscale":
+        print("Processing...")
         grayscale(img)
+        print("Done")
     elif effect == "blackandwhite":
+        print("Processing...")
         blackandwhite(img)
+        print("Done")
     elif effect == "color":
+        print("Processing...")
         color(img, param[1])
+        print("Done")
     elif effect == "colorfilter":
+        print("Processing...")
         colorfilter(img, param[1])
+        print("Done")
     elif effect == "negative":
+        print("Processing...")
         negative(img)
+        print("Done")
     else:
         return False, "attr"
     return True
@@ -88,7 +99,7 @@ def negative(img):
 def color(img, col):
     pixels = img.load()
     if type(col) == str:
-        chosen_color = COLOR_EFFECT_VALUES[col]
+        chosen_color = [int(v1 * COLOR_EFFECT_MEDIUM) for v1 in COLOR_EFFECT_VALUES[col]]
     else:
         chosen_color = col
     for x in range(img.size[0]):
@@ -101,10 +112,10 @@ def color(img, col):
 
 def colorfilter(img, col):
     pixels = img.load()
-    chosen_color = COLOR_EFFECT_VALUES[col]
+    chosen_color = [int(bool(v1) * 255) for v1 in COLOR_EFFECT_VALUES[col]]
     for x in range(img.size[0]):
         for y in range(img.size[1]):
             if get_hue(pixels[x,y]) == None:
                 img.putpixel((x, y), tuple([int(calculate_brightness(pixels[x,y]) * 255)] * 3))
-            elif not abs(get_hue(pixels[x,y]) - get_hue(chosen_color)) <= 7:
+            elif not abs(get_hue(pixels[x,y]) - get_hue(chosen_color)) <= 20:
                 img.putpixel((x, y), tuple([int(calculate_brightness(pixels[x,y]) * 255)] * 3))

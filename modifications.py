@@ -11,15 +11,25 @@ def process(param, img):
             l.append((r, g, b))
         img_pixels.append(l)
     if param[0] == "brightness":
-        return 'image', pic_brightness(weight, height, img, img_pixels, int(param[1]))
+        print("Processing...")
+        out = pic_brightness(weight, height, img, img_pixels, int(param[1]))
+        print("Done")
+        return 'image', out
     if param[0] == "flip":
+        print("Processing...")
         pic_flip(weight, height, img, img_pixels, param[1])
+        print("Done")
     elif param[0] == "rotate":
-        return 'image', rotate(img, int(param[1]))
+        print("Processing...")
+        out = rotate(img, int(param[1]))
+        print("Done")
+        return 'image', out
     elif param[0] == "res_decrease":
+        print("Processing...")
         for i in range(len(param)):
             param[i] = paranthesesOrComma(param[i])
         resdec(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels)
+        print("Done")
     else:
         return False,"attr"
     return True

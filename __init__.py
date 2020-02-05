@@ -1,18 +1,22 @@
 from PIL import Image
 from sys import stderr
-import effects
-import modifications
+import effects, modifications
+import copy
 
 ERRORS = {'?': "An error occured", 'q': "Invalid use of quotation mark", 'attr': "Invalid attribute", \
     'command': "Invalid command", 'name': "Name not found", \
         'lack': "Lack of parameters", 'file': "File not found"}
 
 def error(key):
+    if key == None:
+        return
     print("Error:", ERRORS[key], file=stderr)
     return
 
 def get_parameters(string):
     splitted = string.split()
+    if len(splitted) == 0:
+        return False, None
     quote_open = False
     res = []
     for part in splitted:
@@ -35,6 +39,7 @@ def get_parameters(string):
 def main():
     pictures = {}
     original_pictures = {}
+    undo = {}
     while True:
         param = get_parameters(input())
         if type(param) == tuple:
@@ -56,7 +61,14 @@ def main():
 
         elif command == "effect":
             try:
+                undo[param[1]] = copy.deepcopy(pictures[param[1]])
                 res = effects.process(param[2:], pictures[param[1]])
+                if type(res) == tuple:
+                    if res[0] == False:
+                        del undo[param[1]]
+                        if res[1] == 'attr':
+                            error('attr')
+                            continue
             except KeyError:
                 error('name')
                 continue
@@ -70,11 +82,18 @@ def main():
 
         elif command == "modify":
             try:
+                undo[param[1]] = copy.deepcopy(pictures[param[1]])
                 res = modifications.process(param[2:], pictures[param[1]])
+                if type(res) == tuple:
+                    if res[0] == False:
+                        del undo[param[1]]
+                        if res[1] == 'attr':
+                            error('attr')
+                            continue
             except KeyError:
                 error('name')
                 continue
-            except Exception as e:
+            except:
                 error('?')
                 continue
             if type(res) == tuple:
@@ -108,6 +127,14 @@ def main():
                 error('name')
             except:
                 error('?')
+        elif command == "undo":
+            try:
+                pictures[param[1]] = undo[param[1]]
+                del undo[param[1]]
+            except KeyError:
+                print("There is no undo point for this image")
+            except:
+                error('?')
             
         elif command == "images":
             if len(pictures) == 0:
@@ -121,6 +148,9 @@ def main():
 
         elif command == "exit":
             return True
+        
+        elif command == "show":
+            pictures[param[1]].show()
 
         else:
             error('command')
