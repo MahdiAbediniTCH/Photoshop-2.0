@@ -7,6 +7,10 @@ ERRORS = {'?': "An error occured", 'q': "Invalid use of quotation mark", 'attr':
     'command': "Invalid command", 'name': "Name not found", \
         'lack': "Lack of parameters", 'file': "File not found"}
 
+def help_():
+    file = open("help.txt", 'r')
+    print(file.read())
+
 def error(key):
     if key == None:
         return
@@ -37,6 +41,7 @@ def get_parameters(string):
     return res
 
 def main():
+    help_()
     pictures = {}
     original_pictures = {}
     undo = {}
@@ -144,7 +149,7 @@ def main():
                 print(f"{key}: {pictures[key].filename}")
 
         elif command == "help":
-            print("help")
+            help_()
 
         elif command == "exit":
             return True

@@ -1,0 +1,57 @@
+
+************_Help_************
+
+open: opens an image as the given name
+    Usage: open [image_directory] [image_name]
+
+effect: Command used to put effects on picture
+    Attributes: 
+        grayscale: grayscale a picture
+            Usage: effect [image_name] grayscale
+
+        negative: negativate colors in the picture
+            Usage: effect [image_name] negative
+            
+        blackandwhite: the only colors in picture will be completely black or completely white.
+            Usage: effect [image_name] blackandwhite
+
+        color: gives a chosen color hue to the picture (red, green, blue, yellow, violet)
+            Usage: effect [image_name] color [color_name]
+
+        colorfilter: grayscale all of the picture except colors close to the given color (red, green, blue, yellow, violet)
+            Usage: effect [image_name] colorfilter [color_name]
+
+modify: Command used to modify a picture in different ways
+    Attributes: 
+        brightness: changes brightness of a picture
+            Usage: effect [image_name] brightness [brightness_value(in range of 0 to 100, 50 is normall brightness)]
+
+        flip: flips picture
+            Usage: effect [image_name] flip [horizontal_or_vertical]
+            
+        rotate: rotates picture CCW
+            Usage: effect [image_name] rotate [degrees]
+
+        res_decrease: lowers resolution in the given area(sensitive to amount of parameters)
+            Usage: effect [image_name] res_decrease (x1, y1) (x2, y2)
+
+show: Command used to show image in default photo software
+    Usage: show [image_name]
+
+save: Command used to save edited picture
+    Usage: save [image_name] [directory]
+
+undo: Command used to undo the last edit done
+    Usage: undo [image_name]
+
+reset: Command used to remove all changes on picture and reset it to the point it was opened
+    Usage: reset [image_name]
+
+close: Command used to remove chosen image from open images
+    Usage: close [image_name]
+
+images: Command used to show all open pictures
+
+help: Command used to show help
+
+exit: Command used to close the program
