@@ -31,7 +31,9 @@ def process(param, img):
         resdec(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels)
         print("Done")
     elif param[0] == "show_borders":
+        print("Processing...")
         bording(img, weight, height, img_pixels)
+        print("Done")
     else:
         return False,"attr"
     return True
