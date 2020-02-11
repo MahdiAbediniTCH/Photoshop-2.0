@@ -7,7 +7,7 @@ ERRORS = {'?': "An error occured", 'q': "Invalid use of quotation mark", 'attr':
     'command': "Invalid command", 'name': "Name not found", \
         'lack': "Lack of parameters", 'file': "File not found"}
 
-def help_(params, pictures, original_pictures, undo):
+def help_():
     file = open("help.txt", 'r')
     print(file.read())
 
@@ -20,7 +20,7 @@ def error(key):
 def get_parameters(string):
     splitted = string.split()
     if len(splitted) == 0:
-        return False
+        return False, None
     quote_open = False
     res = []
     for part in splitted:
@@ -29,147 +29,137 @@ def get_parameters(string):
         else:
             res.append(part)
         if part[0] == '"':
-            if quote_open:
-                error('q')
-                return False
+            if quote_open: return False, "q"
             res.pop()
             quote_open = True
             quote = [part[1:]]
         if part[-1] == '"':
-            if not quote_open:
-                error('q')
-                return False
+            if not quote_open: return False, "q"
             quote_open = False
             quote[-1] = quote[-1][:-1]
             res.append(' '.join(quote))
     return res
 
-def open_image(params, pictures, original_pictures, undo):
-    try:
-        pictures[params[2]] = Image.open(params[1])
-        original_pictures[params[2]] = Image.open(params[1])
-    except FileNotFoundError:
-        error('file')
-    except IndexError:
-        error('lack')
-    except:
-        error('?')
-
-def effect(params, pictures, original_pictures, undo):
-    name = params[1]
-    try:
-        undo[name] = copy.deepcopy(pictures[name])
-        res = effects.process(params[2:], pictures[name])
-        if type(res) == tuple:
-            if res[0] == False:
-                del undo[name]
-                if res[1] == 'attr':
-                    error('attr')
-    except KeyError:
-        error('name')
-    except:
-        error('?')
-
-def modify(params, pictures, original_pictures, undo):
-    name = params[1]
-    try:
-        undo[name] = copy.deepcopy(pictures[name])
-        res = modifications.process(params[2:], pictures[name])
-        if type(res) == tuple:
-            if res[0] == False:
-                del undo[name]
-                if res[1] == 'attr':
-                    error('attr')
-            elif res[0] == 'image':
-                pictures[name] = res[1]
-    except KeyError:
-        error('name')
-    except:
-        error('?')
-
-def save(params, pictures, original_pictures, undo):
-    name = params[1]
-    try:
-        pictures[name].save(params[2])
-    except KeyError:
-        error('name')
-    except:
-        error('?')    
-
-def close(params, pictures, original_pictures, undo):
-    name = params[1]
-    try:
-        del pictures[name]
-        del original_pictures[name]
-        if name in undo.keys():
-            del undo[name]
-    except KeyError:
-        error('name')
-    except:
-        error('?')
-
-def reset(params, pictures, original_pictures, undo):
-    name = params[1]
-    try:
-        undo[name] = copy.deepcopy(pictures[name])
-        pictures[name] = original_pictures[name]
-    except KeyError:
-        del undo[name]
-        error('name')
-    except:
-        del undo[name]
-        error('?')
-
-def undo(params, pictures, original_pictures, undo):
-    name = params[1]
-    try:
-        pictures[name] = undo[name]
-        del undo[name]
-    except KeyError:
-        if not (name in pictures.keys()):
-            error('name')
-        else:
-            print("There is no undo point for this image")
-    except:
-        error('?')
-
-def list_images(params, pictures, original_pictures, undo):
-    if len(pictures) == 0:
-        print("There are no open images")
-    else:        
-        for key in pictures:
-            print(f"{key}: {pictures[key].filename}")
-
-def show_image(params, pictures, original_pictures, undo):
-    name = params[1]
-    try:
-        pictures[name].show()
-    except KeyError:
-        error('name')
-
-COMMANDS = {'open': open_image, 'effect': effect, 'modify': modify, 'save': save, 'close': close, \
-            'reset': reset, 'undo': undo, 'images': list_images, 'show': show_image}
-
-def process_command(command, params, pictures, original_pictures, undo):
-    try:
-        COMMANDS[command](params, pictures, original_pictures, undo)
-    except KeyError:
-        error('command')
-
 def main():
-    help_(0, 0, 0, 0)
+    help_()
     pictures = {}
     original_pictures = {}
     undo = {}
     while True:
         param = get_parameters(input())
-        if not param:
-            continue
+        if type(param) == tuple:
+            if param[0] == False:
+                error(param[1])
+                continue
         command = param[0]
-        if command == "exit":
-            return True
-
-        process_command(command, param, pictures, original_pictures, undo)
         
+        if command == "open":
+            try:
+                pictures[param[2]] = Image.open(param[1])
+                original_pictures[param[2]] = Image.open(param[1])
+            except FileNotFoundError:
+                error('file')
+            except IndexError:
+                error('lack')
+            except:
+                error('?')
+
+        elif command == "effect":
+            try:
+                undo[param[1]] = copy.deepcopy(pictures[param[1]])
+                res = effects.process(param[2:], pictures[param[1]])
+                if type(res) == tuple:
+                    if res[0] == False:
+                        del undo[param[1]]
+                        if res[1] == 'attr':
+                            error('attr')
+                            continue
+            except KeyError:
+                error('name')
+                continue
+            except:
+                error('?')
+                continue
+            if type(res) == tuple:
+                if not res[0]:
+                    error(res[1])
+                    continue
+
+        elif command == "modify":
+            try:
+                undo[param[1]] = copy.deepcopy(pictures[param[1]])
+                res = modifications.process(param[2:], pictures[param[1]])
+                if type(res) == tuple:
+                    if res[0] == False:
+                        del undo[param[1]]
+                        if res[1] == 'attr':
+                            error('attr')
+                            continue
+            except KeyError:
+                error('name')
+                continue
+            except:
+                error('?')
+                continue
+            if type(res) == tuple:
+                if not res[0]:
+                    error(res[1])
+                    continue
+                if res[0] == 'image':
+                    pictures[param[1]] = res[1]
+
+        elif command == "save":
+            try:
+                pictures[param[1]].save(param[2])
+            except KeyError:
+                error('name')
+            except:
+                error('?')
+
+        elif command == "close":
+            try:
+                del pictures[param[1]]
+                del original_pictures[param[1]]
+            except KeyError:
+                error('name')
+            except:
+                error('?')
+            
+        elif command == "reset":
+            try:
+                pictures[param[1]] = original_pictures[param[1]]
+            except KeyError:
+                error('name')
+            except:
+                error('?')
+        elif command == "undo":
+            try:
+                pictures[param[1]] = undo[param[1]]
+                del undo[param[1]]
+            except KeyError:
+                print("There is no undo point for this image")
+            except:
+                error('?')
+            
+        elif command == "images":
+            if len(pictures) == 0:
+                print("There are no open images")
+                continue
+            for key in pictures:
+                print(f"{key}: {pictures[key].filename}")
+
+        elif command == "help":
+            help_()
+
+        elif command == "exit":
+            return True
+        
+        elif command == "show":
+            pictures[param[1]].show()
+
+        else:
+            error('command')
+        
+
 if __name__ == "__main__":
     main()
