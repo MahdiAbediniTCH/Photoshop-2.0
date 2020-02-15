@@ -67,7 +67,8 @@ def effect(params, pictures, original_pictures, undo):
                     error('attr')
     except KeyError:
         error('name')
-    except:
+    except Exception as e:
+        raise e
         error('?')
 
 def modify(params, pictures, original_pictures, undo):
@@ -121,11 +122,12 @@ def reset(params, pictures, original_pictures, undo):
         error('?')
 
 def undo(params, pictures, original_pictures, undo):
-    name = params[1]
     try:
+        name = params[1]
         pictures[name] = undo[name]
         del undo[name]
     except KeyError:
+        name = params[1]
         if not (name in pictures.keys()):
             error('name')
         else:

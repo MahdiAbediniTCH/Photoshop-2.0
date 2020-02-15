@@ -15,10 +15,6 @@ def process(param, img):
         print("Processing...")
         grayscale(img)
         print("Done")
-    elif effect == "blackandwhite":
-        print("Processing...")
-        blackandwhite(img)
-        print("Done")
     elif effect == "color":
         print("Processing...")
         color(img, param[1])
@@ -30,6 +26,10 @@ def process(param, img):
     elif effect == "negative":
         print("Processing...")
         negative(img)
+        print("Done")
+    elif effect == "whiteand":
+        print("Processing...")
+        whiteand(img, param)
         print("Done")
     else:
         return False, "attr"
@@ -75,13 +75,17 @@ def grayscale(img):
             img.putpixel((x,y), (brightness_, brightness_, brightness_))
     return True
 
-def blackandwhite(img):
+def whiteand(img, param):
     pixels = img.load()
+    if len(param) == 1:
+        col = BLACK
+    else:
+        col = tuple([i*255 for i in COLOR_EFFECT_VALUES[param[1]]])
     for x in range(img.size[0]):
         for y in range(img.size[1]):
             brightness_ = calculate_brightness(pixels[x,y])
             if brightness_ < BLACKWHITEVALUE:
-                img.putpixel((x, y), BLACK)
+                img.putpixel((x, y), col)
             else:
                 img.putpixel((x, y), WHITE)
     return True
