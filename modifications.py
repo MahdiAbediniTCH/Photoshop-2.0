@@ -10,32 +10,45 @@ def process(param, img):
             r, g, b = img.getpixel((x, y))
             l.append((r, g, b))
         img_pixels.append(l)
-    if param[0] == "brightness":
+    modification = param[0]
+    if modification == "brightness":
         print("Processing...")
         out = pic_brightness(weight, height, img, img_pixels, int(param[1]))
         print("Done")
         return 'image', out
-    if param[0] == "flip":
+    if modification == "flip":
         print("Processing...")
         pic_flip(weight, height, img, img_pixels, param[1])
         print("Done")
-    elif param[0] == "rotate":
+    elif modification == "rotate":
         print("Processing...")
         out = rotate(img, int(param[1]))
         print("Done")
         return 'image', out
-    elif param[0] == "res_decrease":
+    elif modification == "res_decrease":
         print("Processing...")
         for i in range(len(param)):
             param[i] = paranthesesOrComma(param[i])
         resdec(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels)
         print("Done")
-    elif param[0] == "show_borders":
+    elif modification == "border":
         print("Processing...")
         bording(img, weight, height, img_pixels)
         print("Done")
+    elif modification == "blur":
+        print("Processing...")
+        for i in range(len(param)):
+            param[i] = paranthesesOrComma(param[i])
+        if param[-1].isdecimal():
+            if param[-1] in ['1','2','3']:
+                blur(img, [[int(param[len(param)-5]),int(param[len(param)-4])], [int(param[len(param)-3]), int(param[len(param)-2])]], img_pixels, int(param[-1]))
+            else:
+                return False, 'lvl'
+        else:
+            blur(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels, 1)
+        print("Done")
     else:
-        return False,"attr"
+        return False, "attr"
     return True
     
 def paranthesesOrComma(string):
@@ -113,3 +126,20 @@ def bording(img, weight, height, img_pixels):
         for j in range(height):
             img.putpixel((i,j), (sec_img_pixels[i][j][0], sec_img_pixels[i][j][1], sec_img_pixels[i][j][2]))
 
+def blur(img, radius, pixels, lvl):
+
+    for x in range(radius[0][0],radius[1][0]):
+        for y in range(radius[0][1], radius[1][1]):
+            sumr = sumg = sumb = 0
+            count = 0
+            for x2 in range(x - (2*lvl), x + 2*lvl + 1):
+                if (radius[0][0] <= x2 < radius[1][0]):
+                    for y2 in range(y - 2*lvl, y + 2*lvl + 1):
+                        if (radius[0][1] <= y2 < radius[1][1]):
+                            r, g, b = pixels[x2][y2]
+                            sumr += r
+                            sumg += g
+                            sumb += b
+                            count += 1
+            avg = (sumr // count, sumg // count, sumb // count)
+            img.putpixel((x, y), avg)

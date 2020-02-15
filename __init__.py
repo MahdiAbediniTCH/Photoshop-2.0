@@ -67,8 +67,7 @@ def effect(params, pictures, original_pictures, undo):
                     error('attr')
     except KeyError:
         error('name')
-    except Exception as e:
-        raise e
+    except:
         error('?')
 
 def modify(params, pictures, original_pictures, undo):
@@ -79,13 +78,13 @@ def modify(params, pictures, original_pictures, undo):
         if type(res) == tuple:
             if res[0] == False:
                 del undo[name]
-                if res[1] == 'attr':
-                    error('attr')
+                error(res[1])
             elif res[0] == 'image':
                 pictures[name] = res[1]
     except KeyError:
         error('name')
-    except:
+    except Exception as e:
+        raise e
         error('?')
 
 def save(params, pictures, original_pictures, undo):

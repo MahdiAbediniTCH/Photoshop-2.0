@@ -12,8 +12,8 @@ effect: Command used to put effects on picture
         negative: negativate colors in the picture
             Usage: effect [image_name] negative
             
-        blackandwhite: the only colors in picture will be completely black or completely white.
-            Usage: effect [image_name] blackandwhite
+        whiteand: the only colors in picture will be completely white or the color you chose(by default it's black).
+            Usage: effect [image_name] whiteand [color_name]
 
         color: gives a chosen color hue to the picture (red, green, blue, yellow, violet)
             Usage: effect [image_name] color [color_name]
@@ -34,6 +34,12 @@ modify: Command used to modify a picture in different ways
 
         res_decrease: lowers resolution in the given area(sensitive to amount of parameters)
             Usage: effect [image_name] res_decrease (x1, y1) (x2, y2)
+        
+        border: detects and shows borders and edges in picture(in black and white)
+            Usage: effect [image_name] border
+        
+        blur: blurs the given area, choose the amount between 1, 2 and 3, 1 is the lowest level
+            Usage: effect [image_name] blur (x1, y1) (x2, y2) [level]
 
 show: Command used to show image in default photo software
     Usage: show [image_name]
