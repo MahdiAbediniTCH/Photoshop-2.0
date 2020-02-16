@@ -151,3 +151,4 @@ def blur(img, radius, pixels, lvl):
 
 def crop(left, right, top, bottom, img): 
     img = img.crop((left, top, right, bottom))
+    return
