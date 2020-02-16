@@ -16,6 +16,11 @@ def process(param, img):
         out = pic_brightness(weight, height, img, img_pixels, int(param[1]))
         print("Done")
         return 'image', out
+    if modification == "crop":
+        print("Processing...")
+        out = crop(int(param[1]),int(param[2]) ,int(param[3]), int(param[4]), img)
+        print("Done")
+        return 'image', out
     if modification == "flip":
         print("Processing...")
         pic_flip(weight, height, img, img_pixels, param[1])
@@ -143,3 +148,7 @@ def blur(img, radius, pixels, lvl):
                             count += 1
             avg = (sumr // count, sumg // count, sumb // count)
             img.putpixel((x, y), avg)
+
+def crop(left, right, top, bottom, img): 
+    img = img.crop((left, top, right, bottom)) 
+    img.save("bye.jpg")
