@@ -5,7 +5,7 @@ import copy
 
 ERRORS = {'?': "An error occured", 'q': "Invalid use of quotation mark", 'attr': "Invalid attribute", \
     'command': "Invalid command", 'name': "Name not found", \
-        'lack': "Lack of parameters", 'file': "File not found"}
+        'lack': "Lack of parameters", 'file': "File not found", 'lvl': "Invalid level"}
 
 def help_(params, pictures, original_pictures, undo):
     file = open("help.txt", 'r')
@@ -84,7 +84,6 @@ def modify(params, pictures, original_pictures, undo):
     except KeyError:
         error('name')
     except Exception as e:
-        raise e
         error('?')
 
 def save(params, pictures, original_pictures, undo):
