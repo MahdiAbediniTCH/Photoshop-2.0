@@ -3,17 +3,11 @@ from PIL import Image,ImageEnhance
 def process(param, img):
     weight = img.size[0]
     height = img.size[1]
-    img_pixels = []
-    for x in range(weight):
-        l = []
-        for y in range(height):
-            r, g, b = img.getpixel((x, y))
-            l.append((r, g, b))
-        img_pixels.append(l)
+    
     modification = param[0]
     if modification == "brightness":
         print("Processing...")
-        out = pic_brightness(weight, height, img, img_pixels, int(param[1]))
+        out = pic_brightness(weight, height, img, int(param[1]))
         print("Done")
         return 'image', out
     if modification == "crop":
@@ -23,7 +17,7 @@ def process(param, img):
         return 'image', out
     if modification == "flip":
         print("Processing...")
-        pic_flip(weight, height, img, img_pixels, param[1])
+        pic_flip(weight, height, img, param[1])
         print("Done")
     elif modification == "rotate":
         print("Processing...")
@@ -34,23 +28,24 @@ def process(param, img):
         print("Processing...")
         for i in range(len(param)):
             param[i] = paranthesesOrComma(param[i])
-        resdec(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels)
+        resdec(img, param)
         print("Done")
     elif modification == "border":
         print("Processing...")
-        bording(img, weight, height, img_pixels)
+        bording(img, weight, height)
         print("Done")
     elif modification == "blur":
         print("Processing...")
         for i in range(len(param)):
             param[i] = paranthesesOrComma(param[i])
-        if param[-1].isdecimal():
-            if param[-1] in ['1','2','3']:
-                blur(img, [[int(param[len(param)-5]),int(param[len(param)-4])], [int(param[len(param)-3]), int(param[len(param)-2])]], img_pixels, int(param[-1]))
+        if param[5].isdecimal():
+            if param[5] in ['1','2','3']:
+                blur(img, param, int(param[5]))
             else:
+                print(param[5])
                 return False, 'lvl'
         else:
-            blur(img, [[int(param[len(param)-4]),int(param[len(param)-3])], [int(param[len(param)-2]), int(param[len(param)-1])]], img_pixels, 1)
+            blur(img, param, 1)
         print("Done")
     else:
         return False, "attr"
@@ -64,19 +59,20 @@ def paranthesesOrComma(string):
         i += 1
     return string
 
-def pic_flip(weight, height, img, img_pixels, x_or_y):
+def pic_flip(weight, height, img, x_or_y):
+    img_pixels = img.load()
     if x_or_y == "vertical":
         for i in range(weight):
             for j in range(height-1,-1,-1):
-                  img.putpixel((weight-1-i,j), (img_pixels[i][j][0], img_pixels[i][j][1], img_pixels[i][j][2]))
+                  img.putpixel((weight-1-i,j), (img_pixels[i,j][0], img_pixels[i,j][1], img_pixels[i,j][2]))
     else:
         for k in range(2):
             for i in range(weight-1,-1,-1):
                 for j in range(height-1,-1,-1):
-                    img.putpixel((height-j-1,weight-i-1), (img_pixels[i][j][0], img_pixels[i][j][1], img_pixels[i][j][2]))
+                    img.putpixel((height-j-1,weight-i-1), (img_pixels[i,j][0], img_pixels[i,j][1], img_pixels[i,j][2]))
     return True
 
-def pic_brightness(weight, height, img, img_pixels, zTOh_input):
+def pic_brightness(img, zTOh_input):
     zTOh_input /= 50
     enhancer = ImageEnhance.Brightness(img)
     img = enhancer.enhance(zTOh_input)
@@ -86,21 +82,30 @@ def rotate(img, degree):
     img = img.rotate(degree)
     return img
 
-def resdec(img, radius, img_pixels):
-    for i in range(radius[0][0],radius[1][0],3):
-        for j in range(radius[0][1], radius[1][1],3):
-              rr = int((img_pixels[i+1][j][0]+img_pixels[i+1][j][0]+img_pixels[i-1][j][0]+img_pixels[i][j+1][0]+img_pixels[i][j-1][0]+img_pixels[i+1][j+1][0]+img_pixels[i-1][j-1][0])/9)
-              gg = int((img_pixels[i+1][j][1]+img_pixels[i+1][j][1]+img_pixels[i-1][j][1]+img_pixels[i][j+1][1]+img_pixels[i][j-1][1]+img_pixels[i+1][j+1][1]+img_pixels[i-1][j-1][1])/9)
-              bb = int((img_pixels[i+1][j][2]+img_pixels[i+1][j][2]+img_pixels[i-1][j][2]+img_pixels[i][j+1][2]+img_pixels[i][j-1][2]+img_pixels[i+1][j+1][2]+img_pixels[i-1][j-1][2])/9)
+def resdec(img, params):
+    img_pixels = img.load()
+    x1, y1 = int(params[1]), int(params[2])
+    x2, y2 = int(params[3]), int(params[4])
+    for i in range(x1, x2, 3):
+        for j in range(y1, y2,3):
+              rr = int((img_pixels[i+1,j][0]+img_pixels[i+1,j][0]+img_pixels[i-1,j][0]+img_pixels[i,j+1][0]+img_pixels[i,j-1][0]+img_pixels[i+1,j+1][0]+img_pixels[i-1,j-1][0])/9)
+              gg = int((img_pixels[i+1,j][1]+img_pixels[i+1,j][1]+img_pixels[i-1,j][1]+img_pixels[i,j+1][1]+img_pixels[i,j-1][1]+img_pixels[i+1,j+1][1]+img_pixels[i-1,j-1][1])/9)
+              bb = int((img_pixels[i+1,j][2]+img_pixels[i+1,j][2]+img_pixels[i-1,j][2]+img_pixels[i,j+1][2]+img_pixels[i,j-1][2]+img_pixels[i+1,j+1][2]+img_pixels[i-1,AssertionErrorj-1][2])/9)
               for k in range(-1,2):
                   for l in range(-1,2):
                       img.putpixel((i+k,j+l), (rr, gg, bb))
     return True
 
-def bording(img, weight, height, img_pixels):
+def bording(img, weight, height):
     l = []
     ll = []
     sec_img_pixels = []
+    for i in range(weight):
+        temp = []
+        for j in range(height):
+            temp.append(img.getpixel((i, j)))
+        img_pixels.append(temp)
+        del temp
     for i in range(len(img_pixels)):
         for j in range(len(img_pixels[i])):
             for k in range(len(img_pixels[i][j])):
@@ -131,17 +136,19 @@ def bording(img, weight, height, img_pixels):
         for j in range(height):
             img.putpixel((i,j), (sec_img_pixels[i][j][0], sec_img_pixels[i][j][1], sec_img_pixels[i][j][2]))
 
-def blur(img, radius, pixels, lvl):
-
-    for x in range(radius[0][0],radius[1][0]):
-        for y in range(radius[0][1], radius[1][1]):
+def blur(img, param, lvl):
+    pixels = img.load()
+    x1, y1 = int(param[1]), int(param[2])
+    x2, y2 = int(param[3]), int(param[4])
+    for x in range(min(x1, x2), max(x1, x2)):
+        for y in range(min(y1, y2), max(y1, y2)):
             sumr = sumg = sumb = 0
             count = 0
-            for x2 in range(x - (2*lvl), x + 2*lvl + 1):
-                if (radius[0][0] <= x2 < radius[1][0]):
-                    for y2 in range(y - 2*lvl, y + 2*lvl + 1):
-                        if (radius[0][1] <= y2 < radius[1][1]):
-                            r, g, b = pixels[x2][y2]
+            for xx in range(x - (2*lvl), x + 2*lvl + 1):
+                if (x1 <= xx < x2):
+                    for yy in range(y - 2*lvl, y + 2*lvl + 1):
+                        if (y1 <= yy < y2):
+                            r, g, b = pixels[xx,yy]
                             sumr += r
                             sumg += g
                             sumb += b

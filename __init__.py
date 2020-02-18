@@ -5,7 +5,8 @@ import copy
 
 ERRORS = {'?': "An error occured", 'q': "Invalid use of quotation mark", 'attr': "Invalid attribute", \
     'command': "Invalid command", 'name': "Name not found", \
-        'lack': "Lack of parameters", 'file': "File not found", 'lvl': "Invalid level"}
+        'lack': "Lack of parameters", 'file': "File not found", 'lvl': "Invalid level", 'img_ind': "Image index out of range", \
+          }
 
 def help_(params, pictures, original_pictures, undo):
     file = open("help.txt", 'r')
@@ -78,11 +79,17 @@ def modify(params, pictures, original_pictures, undo):
         if type(res) == tuple:
             if res[0] == False:
                 del undo[name]
+                print(res)
                 error(res[1])
             elif res[0] == 'image':
                 pictures[name] = res[1]
     except KeyError:
         error('name')
+    except IndexError as e:
+        if str(e) == "image index out of range":
+            error('img_ind')
+        else:
+            error('lack')
     except Exception as e:
         error('?')
 
