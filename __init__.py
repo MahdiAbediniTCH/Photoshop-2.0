@@ -69,6 +69,7 @@ def effect(params, pictures, original_pictures, undo):
     except KeyError:
         error('name')
     except:
+        raise e
         error('?')
 
 def modify(params, pictures, original_pictures, undo):
@@ -91,6 +92,7 @@ def modify(params, pictures, original_pictures, undo):
         else:
             error('lack')
     except Exception as e:
+        raise e
         error('?')
 
 def save(params, pictures, original_pictures, undo):
@@ -155,7 +157,7 @@ def show_image(params, pictures, original_pictures, undo):
         error('name')
 
 COMMANDS = {'open': open_image, 'effect': effect, 'modify': modify, 'save': save, 'close': close, \
-            'reset': reset, 'undo': undo, 'images': list_images, 'show': show_image}
+            'reset': reset, 'undo': undo, 'images': list_images,'help': help_, 'show': show_image}
 
 def process_command(command, params, pictures, original_pictures, undo):
     try:
