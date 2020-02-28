@@ -1,21 +1,34 @@
 from PIL import Image,ImageEnhance
+import math
 
 def process(param, img):
     weight = img.size[0]
     height = img.size[1]
-    
     modification = param[0]
-    if modification == "brightness":
+    if modification == "temprature":
+        print("processing")
+        convert_temp(img, int(param[1]))
+        print("Done")
+    elif modification == "grad":
+        print("processing")
+        out = grad_blue(img, weight, height, param[1])
+        print("Done")
+        return 'image', out
+    elif modification == "decrease_resolution":
+        print("processing...")
+        res_dec(img, param[1])
+        print("Done")
+    elif modification == "brightness":
         print("Processing...")
         out = pic_brightness(weight, height, img, int(param[1]))
         print("Done")
         return 'image', out
-    if modification == "crop":
+    elif modification == "crop":
         print("Processing...")
         out = crop(int(param[1]),int(param[2]) ,int(param[3]), int(param[4]), img)
         print("Done")
         return 'image', out
-    if modification == "flip":
+    elif modification == "flip":
         print("Processing...")
         pic_flip(weight, height, img, param[1])
         print("Done")
@@ -159,3 +172,43 @@ def blur(img, param, lvl):
 def crop(left, right, top, bottom, img): 
     img2 = img.crop((left, top, right, bottom))
     return img2
+
+def res_dec(img, rad):
+    to_tagh = 1
+    if int(rad) == 1:
+        to_tagh = 4
+    if int(rad) == 2:
+        to_tagh = 3
+    if int(rad) == 3:
+        to_tagh = 2
+    x,y = img.size
+    x2,y2 = math.floor(int(x/to_tagh)), math.floor(int(y/to_tagh))
+    img2 = img.resize((x2,y2), Image.ANTIALIAS)
+    return img2
+
+def grad(img, weight, height, color):
+    for i in range (height):
+        for j in range(weight):
+            r, g, b = img.getpixel((i, j))
+            if color == "blue":
+                img.putpixel((i, j), (0, 0, b))
+            elif color == "red":
+                img.putpixel((i, j), (r, 0, 0))
+            elif color == "green":
+                img.putpixel((i, j), (0, g, 0))
+            elif color == "violet":
+                img.putpixel((i,j), (r,0,b))
+            elif color == "grey":
+                img.putpixel((i,j), ((r+g+b)/3, (r+g+b)/3, (r+g+b)/3)) 
+    return img
+
+def convert_temp(image, temp):
+    weight, height = image.size
+    for i in range(weight):
+        for j in range(height):
+            r, g, b = image.getpixel((i,j))
+            image.putpixel((i, j), (r+temp, g, b-temp))
+    return image
+
+##img = Image.open("pic.jpg")
+##process(["temprature", -50], img)

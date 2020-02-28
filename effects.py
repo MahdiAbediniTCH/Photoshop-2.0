@@ -121,7 +121,5 @@ def colorfilter(img, col):
         for y in range(img.size[1]):
             if get_hue(pixels[x,y]) == None:
                 img.putpixel((x, y), tuple([int(calculate_brightness(pixels[x,y]) * 255)] * 3))
-            elif abs(get_hue(pixels[x,y]) - get_hue(chosen_color)) < 13 or (min(get_hue(pixels[x,y]), get_hue(chosen_color)) + 60 - max(get_hue(pixels[x,y]), get_hue(chosen_color))) < 13:
-                pass
-            else:
+            elif not abs(get_hue(pixels[x,y]) - get_hue(chosen_color)) <= 20:
                 img.putpixel((x, y), tuple([int(calculate_brightness(pixels[x,y]) * 255)] * 3))
