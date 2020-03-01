@@ -1,5 +1,6 @@
 from PIL import Image
 from sys import stderr
+import os
 import effects, modifications
 import copy
 
@@ -8,7 +9,7 @@ ERRORS = {'?': "An error occured", 'q': "Invalid use of quotation mark", 'attr':
         'lack': "Lack of parameters", 'file': "File not found", 'lvl': "Invalid level", 'img_ind': "Image index out of range", \
           }
 
-def help_(params, pictures, original_pictures, undo):
+def help_(params, pictures, directories, undo):
     file = open("help.txt", 'r')
     print(file.read())
 
@@ -24,6 +25,7 @@ def get_parameters(string):
         return False
     quote_open = False
     res = []
+    quote = []
     for part in splitted:
         if quote_open:
             quote.append(part)
@@ -45,10 +47,10 @@ def get_parameters(string):
             res.append(' '.join(quote))
     return res
 
-def open_image(params, pictures, original_pictures, undo):
+def open_image(params, pictures, directories, undo):
     try:
         pictures[params[2]] = Image.open(params[1])
-        original_pictures[params[2]] = Image.open(params[1])
+        directories[params[2]] = params[1]
     except FileNotFoundError:
         error('file')
     except IndexError:
@@ -56,7 +58,7 @@ def open_image(params, pictures, original_pictures, undo):
     except:
         error('?')
 
-def effect(params, pictures, original_pictures, undo):
+def effect(params, pictures, directories, undo):
     name = params[1]
     try:
         undo[name] = copy.deepcopy(pictures[name])
@@ -71,7 +73,7 @@ def effect(params, pictures, original_pictures, undo):
     except:
         error('?')
 
-def modify(params, pictures, original_pictures, undo):
+def modify(params, pictures, directories, undo):
     name = params[1]
     try:
         undo[name] = copy.deepcopy(pictures[name])
@@ -91,24 +93,26 @@ def modify(params, pictures, original_pictures, undo):
         else:
             error('lack')
     except Exception as e:
-        raise e
         error('?')
 
-def save(params, pictures, original_pictures, undo):
+def save(params, pictures, directories, undo):
+    directory = params[2]
     name = params[1]
     try:
+        if directory.count('\\') > 0 or directory.count('/') > 0:
+            if not os.path.exists(os.path.dirname(directory)):
+                os.makedirs(os.path.dirname(directory))
         pictures[name].save(params[2])
     except KeyError:
         error('name')
-    except:
-        raise e
+    except Exception as e:
         error('?')    
 
-def close(params, pictures, original_pictures, undo):
+def close(params, pictures, directories, undo):
     name = params[1]
     try:
         del pictures[name]
-        del original_pictures[name]
+        del directories[name]
         if name in undo.keys():
             del undo[name]
     except KeyError:
@@ -116,22 +120,23 @@ def close(params, pictures, original_pictures, undo):
     except:
         error('?')
 
-def reset(params, pictures, original_pictures, undo):
+def reset(params, pictures, directories, undo):
     name = params[1]
     try:
         undo[name] = copy.deepcopy(pictures[name])
-        pictures[name] = original_pictures[name]
+        pictures[name] = Image.open(directories[name])
     except KeyError:
         del undo[name]
         error('name')
-    except:
+    except Exception as e:
+        breakpoint()
         del undo[name]
         error('?')
 
-def undo(params, pictures, original_pictures, undo):
+def undo(params, pictures, directories, undo):
     try:
         name = params[1]
-        pictures[name] = undo[name]
+        pictures[name] = copy.deepcopy(undo[name])
         del undo[name]
     except KeyError:
         name = params[1]
@@ -142,14 +147,15 @@ def undo(params, pictures, original_pictures, undo):
     except:
         error('?')
 
-def list_images(params, pictures, original_pictures, undo):
+def list_images(params, pictures, directories, undo):
     if len(pictures) == 0:
         print("There are no open images")
-##    else:        
-##        for key in pictures:
-##            print(%s: %s".format(key, pictures[key].filename")
+    else:        
+        for key in pictures.keys():
+            pictures[key].seek(0)
+            print(key + ": " + directories[key])
 
-def show_image(params, pictures, original_pictures, undo):
+def show_image(params, pictures, directories, undo):
     name = params[1]
     try:
         pictures[name].show()
@@ -159,16 +165,16 @@ def show_image(params, pictures, original_pictures, undo):
 COMMANDS = {'open': open_image, 'effect': effect, 'modify': modify, 'save': save, 'close': close, \
             'reset': reset, 'undo': undo, 'images': list_images, 'show': show_image}
 
-def process_command(command, params, pictures, original_pictures, undo):
+def process_command(command, params, pictures, directories, undo):
     try:
-        COMMANDS[command](params, pictures, original_pictures, undo)
+        COMMANDS[command](params, pictures, directories, undo)
     except KeyError:
         error('command')
 
 def main():
     help_(0, 0, 0, 0)
     pictures = {}
-    original_pictures = {}
+    directories = {}
     undo = {}
     while True:
         param = get_parameters(input())
@@ -178,7 +184,7 @@ def main():
         if command == "exit":
             return True
 
-        process_command(command, param, pictures, original_pictures, undo)
+        process_command(command, param, pictures, directories, undo)
         
 if __name__ == "__main__":
     main()

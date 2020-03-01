@@ -1,0 +1,26 @@
+open pic.jpg p
+effect p grayscale
+effect p negative
+effect p whiteand
+undo p
+show p
+effect p whiteand blue
+effect p color violet
+effect p colorfilter green
+effect p colorfilter blue
+effect p colorfilter red
+modify p brightness 65
+modify p brightness 35
+modify p flip horizontal
+modify p flip vertical
+modify p rotate 90
+modify p rotate 180
+modify p decrease_res 1
+modify p decrease_res 3
+modify p border
+modify p blur 0 0 300 300 3
+open pic.jpg p2
+images
+close p2
+images
+exit

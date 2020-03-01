@@ -5,22 +5,22 @@ def process(param, img):
     weight = img.size[0]
     height = img.size[1]
     modification = param[0]
-    if modification == "temprature":
-        print("processing")
+    if modification == "temp":
+        print("Processing")
         convert_temp(img, int(param[1]))
         print("Done")
     elif modification == "grad":
-        print("processing")
-        out = grad_blue(img, weight, height, param[1])
+        print("Processing")
+        out = grad(img, weight, height, param[1])
         print("Done")
         return 'image', out
-    elif modification == "decrease_resolution":
-        print("processing...")
+    elif modification == "decrease_res":
+        print("Processing...")
         res_dec(img, param[1])
         print("Done")
     elif modification == "brightness":
         print("Processing...")
-        out = pic_brightness(weight, height, img, int(param[1]))
+        out = pic_brightness(img, int(param[1]))
         print("Done")
         return 'image', out
     elif modification == "crop":
@@ -103,7 +103,7 @@ def resdec(img, params):
         for j in range(y1, y2,3):
               rr = int((img_pixels[i+1,j][0]+img_pixels[i+1,j][0]+img_pixels[i-1,j][0]+img_pixels[i,j+1][0]+img_pixels[i,j-1][0]+img_pixels[i+1,j+1][0]+img_pixels[i-1,j-1][0])/9)
               gg = int((img_pixels[i+1,j][1]+img_pixels[i+1,j][1]+img_pixels[i-1,j][1]+img_pixels[i,j+1][1]+img_pixels[i,j-1][1]+img_pixels[i+1,j+1][1]+img_pixels[i-1,j-1][1])/9)
-              bb = int((img_pixels[i+1,j][2]+img_pixels[i+1,j][2]+img_pixels[i-1,j][2]+img_pixels[i,j+1][2]+img_pixels[i,j-1][2]+img_pixels[i+1,j+1][2]+img_pixels[i-1,AssertionErrorj-1][2])/9)
+              bb = int((img_pixels[i+1,j][2]+img_pixels[i+1,j][2]+img_pixels[i-1,j][2]+img_pixels[i,j+1][2]+img_pixels[i,j-1][2]+img_pixels[i+1,j+1][2]+img_pixels[i-1,j-1][2])/9)
               for k in range(-1,2):
                   for l in range(-1,2):
                       img.putpixel((i+k,j+l), (rr, gg, bb))
@@ -113,6 +113,7 @@ def bording(img, weight, height):
     l = []
     ll = []
     sec_img_pixels = []
+    img_pixels = []
     for i in range(weight):
         temp = []
         for j in range(height):
@@ -132,7 +133,6 @@ def bording(img, weight, height):
             jam0 = jam1 = jam2 = jam3 = 0
             xs = [i+1, i-1]
             ys = [j+1, j-1]
-            flag = False
             for k in range(3):
                 jam0 += abs(img_pixels[i+1][j+1][k] - img_pixels[i-1][j-1][k])
                 jam1 += abs(img_pixels[i+1][j][k] - img_pixels[i-1][j][k])
