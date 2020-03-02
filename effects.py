@@ -21,7 +21,7 @@ def process(param, img):
         print("Done")
     elif effect == "colorfilter":
         print("Processing...")
-        colorfilter(img, param[1])
+        colorfilter(img, param)
         print("Done")
     elif effect == "negative":
         print("Processing...")
@@ -114,7 +114,8 @@ def color(img, col):
            img.putpixel((x, y), new_color)
     return True
 
-def colorfilter(img, col):
+def colorfilter(img, param):
+    col = param[1]
     pixels = img.load()
     chosen_color = [int(bool(v1) * 255) for v1 in COLOR_EFFECT_VALUES[col]]
     for x in range(img.size[0]):
@@ -122,4 +123,12 @@ def colorfilter(img, col):
             if get_hue(pixels[x,y]) == None:
                 img.putpixel((x, y), tuple([int(calculate_brightness(pixels[x,y]) * 255)] * 3))
             elif not abs(get_hue(pixels[x,y]) - get_hue(chosen_color)) <= 20:
-                img.putpixel((x, y), tuple([int(calculate_brightness(pixels[x,y]) * 255)] * 3))
+                if len(param) >= 3:
+                    if param[2] == "-r":
+                        pass
+                else:
+                    img.putpixel((x, y), tuple([int(calculate_brightness(pixels[x,y]) * 255)] * 3))
+            else:
+                if len(param) >= 3:
+                    if param[2] == "-r":
+                        img.putpixel((x, y), tuple([int(calculate_brightness(pixels[x,y]) * 255)] * 3))

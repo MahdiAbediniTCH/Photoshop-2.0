@@ -16,8 +16,9 @@ def process(param, img):
         return 'image', out
     elif modification == "decrease_res":
         print("Processing...")
-        res_dec(img, param[1])
+        out = res_dec(img, param[1])
         print("Done")
+        return 'image', out
     elif modification == "brightness":
         print("Processing...")
         out = pic_brightness(img, int(param[1]))

@@ -25,6 +25,8 @@ file = open("tests.txt", 'r')
 commands = file.readlines()
 inputs = list()
 for i in range(len(commands)):
+    if commands[i][0] == '#':
+        continue
     if commands[i][-1] == '\n':
         inputs.append(commands[i][:-1])
         com = commands[i].split()
